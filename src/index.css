@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --brand: #2ACA65;
+}
+
+body {
+  background: #090e10;
+  font-family: 'DM Sans', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(42,202,101,.25);
+  border-radius: 4px;
+}
