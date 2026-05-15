@@ -256,9 +256,9 @@ const [mobileOpen, setMobileOpen] = useState(false);
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 fade-in" style={{ animationDelay: '0.3s' }}>
-            <a href="#" className="btn-primary text-[#0a0f0a] font-semibold px-7 py-3.5 rounded-xl text-sm w-full sm:w-auto">
+            <Link to="/login" className="btn-primary text-[#0a0f0a] font-semibold px-7 py-3.5 rounded-xl text-sm w-full sm:w-auto">
               Start for free — no credit card
-            </a>
+            </Link>
             <a href="#how-it-works" className="border border-white/10 hover:border-green-400/30 text-white/70 hover:text-white transition-all font-medium px-7 py-3.5 rounded-xl text-sm w-full sm:w-auto">
               See how it works →
             </a>
@@ -457,12 +457,12 @@ const [mobileOpen, setMobileOpen] = useState(false);
             Stop procrastinating on backend setup. Formeze turns any HTML form into a live data collector in under a minute.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a href="#" className="btn-primary text-[#0a0f0a] font-semibold px-8 py-4 rounded-xl text-base">
+            <Link to="/login" className="btn-primary text-[#0a0f0a] font-semibold px-8 py-4 rounded-xl text-base">
               Create your free endpoint →
-            </a>
-            <a href="#" className="border border-white/10 hover:border-green-400/30 text-white/60 hover:text-white transition-all font-medium px-8 py-4 rounded-xl text-base">
+            </Link>
+            <Link to="/docs" className="border border-white/10 hover:border-green-400/30 text-white/60 hover:text-white transition-all font-medium px-8 py-4 rounded-xl text-base">
               Read the docs
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -481,11 +481,11 @@ const [mobileOpen, setMobileOpen] = useState(false);
 
           <div className="flex flex-wrap justify-center gap-6 text-sm text-white/35">
             {["Docs", "Help", "Support", "Privacy", "Terms", "Status"].map(l => (
-              <a key={l} href="#" className="hover:text-green-400 transition-colors">{l}</a>
+              <Link key={l} to={`/` + l.toLowerCase()} className="hover:text-green-400 transition-colors">{l}</Link>
             ))}
           </div>
 
-          <p className="text-xs text-white/20">© 2025 Formeze. All rights reserved.</p>
+          <p className="text-xs text-white/20">© 2026 Formeze. All rights reserved.</p>
         </div>
       </footer>
     </div>
