@@ -31,7 +31,7 @@ Formeze is a developer-friendly form backend that lets you add contact forms, le
 
 ### 1. Create an account
 
-Sign up at [formeze.com](https://formeze.com) — the free plan requires no credit card.
+Sign up at [formeze.com](https://formeze.netlify.app/) — the free plan requires no credit card.
 
 ### 2. Create a form
 
@@ -129,22 +129,6 @@ Formeze expects a `2xx` response within 10 seconds. Failed deliveries are retrie
 
 ---
 
-## Plans
-
-| | Free | Pro | Business |
-|---|:---:|:---:|:---:|
-| Forms | 1 | Unlimited | Unlimited |
-| Submissions / month | 100 | 10,000 | Unlimited |
-| Email notifications | ✓ | ✓ | ✓ |
-| File uploads | — | ✓ | ✓ |
-| Integrations | — | ✓ | ✓ |
-| Webhooks | — | ✓ | ✓ |
-| Team seats | — | — | ✓ |
-| Custom domain | — | — | ✓ |
-| Priority support | — | — | ✓ |
-| **Price** | **Free** | **$12 / mo** | **$39 / mo** |
-
----
 
 ## Security
 
@@ -188,18 +172,11 @@ Authorization: Bearer YOUR_API_KEY
 
 Returns a paginated list of submissions for the given form.
 
-Full API docs are available at [docs.formeze.com](https://docs.formeze.com).
+Full API docs are available at [docs.formeze.com](https://formeze.netlify.app/Docs).
 
 ---
 
-## Support
 
-| Channel | Link |
-|---|---|
-| Documentation | [docs.formeze.com](https://docs.formeze.com) |
-| Email support | support@formeze.com |
-| Status page | [status.formeze.com](https://status.formeze.com) |
-| Community | [community.formeze.com](https://community.formeze.com) |
 
 Support hours: **Monday – Friday, 9am – 6pm UTC**. Pro and Business customers receive priority responses.
 
@@ -207,8 +184,8 @@ Support hours: **Monday – Friday, 9am – 6pm UTC**. Pro and Business customer
 
 ## License
 
-Formeze's client-side libraries are open source under the [MIT License](LICENSE). The Formeze service itself is proprietary — see [formeze.com/terms](https://formeze.com/terms) for full terms of service.
+Formeze's client-side libraries are open source under the [MIT License](LICENSE). The Formeze service itself is proprietary — see [formeze.com/terms](https://formeze.netlify.app/) for full terms of service.
 
 ---
 
-<p align="center">Made with ♥ by the Formeze team · <a href="https://formeze.com">formeze.com</a></p>
+<p align="center">Made with ♥ by the Formeze team · <a href="https://formeze.netlify.app/">formeze.com</a></p>
