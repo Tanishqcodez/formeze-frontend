@@ -11,7 +11,7 @@ import ForgotPassword from "./components/auth/forgotPassword";
 import ResetPassword from "./components/auth/resetPassword";
 import Dashboard from "./components/dashboard";
 import NotFound from "./components/notfound";
-import NotVerified from "./components/auth/notverified";
+import NotVerified from "./components/auth/notVerified";
 import PrivacyPage from "./components/privacy";
 import TermsPage from "./components/terms";
 function App() {
