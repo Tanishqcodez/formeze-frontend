@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect } from "react";
+import { useState, useLayoutEffect, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AreaChart,
@@ -12,50 +12,21 @@ import {
   CartesianGrid,
 } from "recharts";
 import { Toaster, toast } from "sonner";
+import { ScaleLoader } from "react-spinners";
 
-/* ─────────────────────────────────────────
-   Brand tokens
-───────────────────────────────────────── */
+
 const BRAND = "#2ACA65";
 const BRAND_DIM = "rgba(42,202,101,0.10)";
 const BRAND_BORDER = "rgba(42,202,101,0.28)";
-const NAVBAR_H = 64; // px — match your navbar height
-
+const NAVBAR_H = 64; 
 const ROOT_ID = "fz-dashboard-root";
 const STYLE_ID = "fz-dashboard-styles";
 
-/* ─────────────────────────────────────────
-   Scoped style hook
-   - Injects a <style> tag once, keyed by STYLE_ID
-   - Removed automatically when the component unmounts
-───────────────────────────────────────── */
 
-function timeAgo(date) {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
 
-  const intervals = [
-    { label: "yr", seconds: 31536000 },
-    { label: "mo", seconds: 2592000 },
-    { label: "d", seconds: 86400 },
-    { label: "hr", seconds: 3600 },
-    { label: "min", seconds: 60 },
-    { label: "sec", seconds: 1 },
-  ];
-
-  for (const interval of intervals) {
-    const count = Math.floor(seconds / interval.seconds);
-
-    if (count >= 1) {
-      return `${count}${interval.label} ago`;
-    }
-  }
-
-  return "just now";
-}
 
 function useScopedStyles() {
   useLayoutEffect(() => {
-    // Idempotent font injection
     const FONT_ID = "fz-google-fonts";
     if (!document.getElementById(FONT_ID)) {
       const link = document.createElement("link");
@@ -66,10 +37,9 @@ function useScopedStyles() {
       document.head.appendChild(link);
     }
 
-    // Only inject once per page
     if (document.getElementById(STYLE_ID)) return;
 
-    const R = `#${ROOT_ID}`; // scope prefix for every rule
+    const R = `#${ROOT_ID}`; 
 
     const css = `
       /* ── Keyframes (names are namespaced with fz- prefix) ── */
@@ -213,18 +183,12 @@ function useScopedStyles() {
     tag.textContent = css;
     document.head.appendChild(tag);
 
-    // Cleanup on unmount
     return () => {
       document.getElementById(STYLE_ID)?.remove();
     };
   }, []);
 }
 
-//  Mock data
-
-/* ─────────────────────────────────────────
-   Icons
-───────────────────────────────────────── */
 const Ico = {
   Submit: () => (
     <svg
@@ -398,9 +362,6 @@ const navItems = [
   { id: "settings", label: "Settings", Icon: Ico.Gear },
 ];
 
-/* ─────────────────────────────────────────
-   Tiny shared components
-───────────────────────────────────────── */
 function Avatar({ name, size = 36 }) {
   const initials = name
     .split(" ")
@@ -493,9 +454,7 @@ const cardStyle = (extra = {}) => ({
   ...extra,
 });
 
-/* ─────────────────────────────────────────
-   Sidebar content (reused in desktop + drawer)
-───────────────────────────────────────── */
+
 function SidebarContent({
   activeTab,
   setActiveTab,
@@ -603,9 +562,7 @@ function SidebarContent({
   );
 }
 
-/* ─────────────────────────────────────────
-   Modals
-───────────────────────────────────────── */
+
 function LogoutModal({ onConfirm, onCancel }) {
   return (
     <div
@@ -708,6 +665,22 @@ function LogoutModal({ onConfirm, onCancel }) {
   );
 }
 
+function timeAgo(date) {
+if (!date) return "No submissions yet";
+const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+const intervals = [
+  { label: "year",   seconds: 31536000 },
+  { label: "month",  seconds: 2592000  },
+  { label: "day",    seconds: 86400    },
+  { label: "hour",   seconds: 3600     },
+  { label: "minute", seconds: 60       },
+];
+for (const interval of intervals) {
+  const count = Math.floor(seconds / interval.seconds);
+  if (count >= 1) return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
+}
+return "Just now";
+}
 function MessagePanel({ msg, onClose }) {
   return (
     <div
@@ -890,38 +863,132 @@ function MessagePanel({ msg, onClose }) {
   );
 }
 
-/* ─────────────────────────────────────────
-   MAIN DASHBOARD
-───────────────────────────────────────── */
+//  MAIN DASHBOARD
+
 export default function Dashboard() {
-  useScopedStyles(); // ← injects styles, cleans up on unmount
+  useScopedStyles();
 
   const [activeTab, setActiveTab] = useState("overview");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
   const [selectedMsg, setSelectedMsg] = useState(null);
-  const [notifEmail, setNotifEmail] = useState(true);
-  const [notifBrowser, setNotifBrowser] = useState(false);
   const [loggedOut, setLoggedOut] = useState(false);
   const [user, setUser] = useState({
     name: "User",
     email: "user@example.com",
     unreadForms: 0,
+    emailNotification: true,
+    verified: true,
   });
+  const [notifEmail, setNotifEmail] = useState(user.emailNotification);
+  // Bug fix: was [{}] which injected a phantom submission into stats
   const [form, setForm] = useState([]);
+  const [unreadForms, setUnreadForms] = useState({
+    // Bug fix: parse as Number — localStorage returns a string, breaking arithmetic
+    previous: Number(localStorage.getItem("nof")) || 0,
+    current: 0,
+    unread: 0,
+  });
+  const [emailLoading, setEmailLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // ── API helpers ──────────────────────────────────────────────────────────────
+  const fetchUser = async () => {
+    try {
+      const response = await fetch(
+        "https://formeze-backend.onrender.com/api/auth/fetch",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+        },
+      );
+
+      if (response.status === 401) {
+        toast.error("Session expired. Please log in again.");
+        localStorage.clear();
+        navigate("/login");
+        return;
+      }
+
+      const json = await response.json();
+
+      if (!json.user?.verified) {
+        navigate("/notverified", {
+          state: {fromDashboard: true, user: user}
+        });
+        return;
+      }
+
+      setUser(json.user);
+      setNotifEmail(json.user.emailNotification);
+    } catch (error) {
+      toast.error(error.message || "Failed to fetch user data");
+    }
+  };
+
+  const fetchForms = async () => {
+    try {
+      const response = await fetch(
+        "https://formeze-backend.onrender.com/form/fetch",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+        },
+      );
+
+      const json = await response.json();
+
+      if (response.status === 200) {
+        const docs = json.document ?? [];
+        setForm(docs);
+        setUnreadForms((prev) => ({
+          ...prev,
+          current: docs.length,
+          unread: docs.length > prev.previous ? docs.length - prev.previous : 0,
+        }));
+        localStorage.setItem("nof", docs.length);
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to fetch forms");
+    }
+  };
+
+  const toggleEmailNotification = async () => {
+    setEmailLoading(true);
+    try {
+      const response = await fetch(
+        "https://formeze-backend.onrender.com/toggle/email",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "auth-token": localStorage.getItem("token"),
+          },
+        },
+      );
+      if (response.ok) {
+        setNotifEmail((prev) => !prev);
+      } else {
+        toast.error("Failed to update notification preference.");
+      }
+    } catch (error) {
+      toast.error(error.message || "Failed to update notification preference.");
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
 
   useEffect(() => {
-    const toggleEmailNotification = async () => {
-      const response = await fetch("https://formeze-backend.onrender.com/toggle/email", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "auth-token": localStorage.getItem("token"),
-        },
-      });
-    };
-    toggleEmailNotification();
-  }, [notifEmail]);
+    fetchUser();
+    fetchForms();
+  }, []);
 
   if (loggedOut)
     return (
@@ -955,88 +1022,16 @@ export default function Dashboard() {
     messages: "Messages",
     settings: "Settings",
   };
-  const [unreadForms, setUnreadForms] = useState({
-    previous: localStorage.getItem("nof") || 0,
-    current: form.length,
-    unread:
-      form.length > localStorage.getItem("nof")
-        ? form.length - localStorage.getItem("nof")
-        : 0,
-  });
+
   const tabSub = {
     overview: `Welcome back, ${user.name} 👋`,
     messages: `${unreadForms.unread} unread message${unreadForms.unread !== 1 ? "s" : ""}`,
     settings: "Manage your preferences",
   };
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("https://formeze-backend.onrender.com/api/auth/fetch", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": localStorage.getItem("token"),
-          },
-        });
 
-        const json = await response.json();
+  
 
-        setUser(json.user);
-      } catch (error) {
-        toast(error || "Failed to fetch user data");
-      }
-    };
 
-    const fetchForms = async () => {
-      try {
-        const response = await fetch("https://formeze-backend.onrender.com/form/fetch", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "auth-token": localStorage.getItem("token"),
-          },
-        });
-
-        const json = await response.json();
-        setForm(json.document);
-        setUnreadForms({
-          ...unreadForms,
-          current: json.document.length,
-          unread:
-            json.document.length > unreadForms.previous
-              ? json.document.length - unreadForms.previous
-              : 0,
-        });
-        localStorage.setItem("nof", json.document.length);
-      } catch (error) {
-        toast(error || "Failed to fetch forms");
-      }
-    };
-    fetchUser();
-    fetchForms();
-  }, []);
-
-  function timeAgo(date) {
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-
-    const intervals = [
-      { label: "year", seconds: 31536000 },
-      { label: "month", seconds: 2592000 },
-      { label: "day", seconds: 86400 },
-      { label: "hour", seconds: 3600 },
-      { label: "minute", seconds: 60 },
-    ];
-
-    for (const interval of intervals) {
-      const count = Math.floor(seconds / interval.seconds);
-
-      if (count >= 1) {
-        return `${count} ${interval.label}${count > 1 ? "s" : ""} ago`;
-      }
-    }
-
-    return "Just now";
-  }
 
   const statItems = [
     {
@@ -1048,8 +1043,11 @@ export default function Dashboard() {
     {
       label: "Unread Messages",
       value: unreadForms.unread,
-      delta:unreadForms.unread == 0 ? "0%" : parseInt(((form.length - unreadForms.unread) / form.length) * 100) +
-        "%" ,
+      delta:
+        unreadForms.unread == 0
+          ? "0%"
+          : parseInt(((form.length - unreadForms.unread) / form.length) * 100) +
+            "%",
       Icon: Ico.Inbox,
     },
     {
@@ -1059,66 +1057,46 @@ export default function Dashboard() {
     },
   ];
 
-  const submissionsData = [
-    { day: "Mon", submissions: 0 },
-    { day: "Tue", submissions: 0 },
-    { day: "Wed", submissions: 0 },
-    { day: "Thu", submissions: 0 },
-    { day: "Fri", submissions: 0 },
-    { day: "Sat", submissions: 0 },
-    { day: "Sun", submissions: 0 },
-  ];
-
-  form.forEach((item) => {
-    const date = new Date(item.createdAt);
-
-    const day = date.toLocaleDateString("en-US", {
-      weekday: "short",
+  // Bug fix: these were rebuilt on every render; useMemo recomputes only when `form` changes
+  const submissionsData = useMemo(() => {
+    const days = [
+      { day: "Mon", submissions: 0 },
+      { day: "Tue", submissions: 0 },
+      { day: "Wed", submissions: 0 },
+      { day: "Thu", submissions: 0 },
+      { day: "Fri", submissions: 0 },
+      { day: "Sat", submissions: 0 },
+      { day: "Sun", submissions: 0 },
+    ];
+    form.forEach((item) => {
+      const day = new Date(item.createdAt).toLocaleDateString("en-US", { weekday: "short" });
+      const found = days.find((d) => d.day === day);
+      if (found) found.submissions += 1;
     });
+    return days;
+  }, [form]);
 
-    const found = submissionsData.find((d) => d.day === day);
-
-    if (found) {
-      found.submissions += 1;
-    }
-  });
-
-  const monthlyData = [
-    { month: "Jan", submissions: 0 },
-    { month: "Feb", submissions: 0 },
-    { month: "Mar", submissions: 0 },
-    { month: "Apr", submissions: 0 },
-    { month: "May", submissions: 0 },
-    { month: "Jun", submissions: 0 },
-    { month: "Jul", submissions: 0 },
-    { month: "Aug", submissions: 0 },
-    { month: "Sep", submissions: 0 },
-    { month: "Oct", submissions: 0 },
-    { month: "Nov", submissions: 0 },
-    { month: "Dec", submissions: 0 },
-  ];
-
-  form.forEach((item) => {
-    const date = new Date(item.createdAt);
-
-    const month = date.toLocaleDateString("en-US", {
-      month: "short",
+  const monthlyData = useMemo(() => {
+    const months = [
+      { month: "Jan", submissions: 0 }, { month: "Feb", submissions: 0 },
+      { month: "Mar", submissions: 0 }, { month: "Apr", submissions: 0 },
+      { month: "May", submissions: 0 }, { month: "Jun", submissions: 0 },
+      { month: "Jul", submissions: 0 }, { month: "Aug", submissions: 0 },
+      { month: "Sep", submissions: 0 }, { month: "Oct", submissions: 0 },
+      { month: "Nov", submissions: 0 }, { month: "Dec", submissions: 0 },
+    ];
+    form.forEach((item) => {
+      const month = new Date(item.createdAt).toLocaleDateString("en-US", { month: "short" });
+      const found = months.find((m) => m.month === month);
+      if (found) found.submissions += 1;
     });
-
-    const found = monthlyData.find((m) => m.month === month);
-
-    if (found) {
-      found.submissions += 1;
-    }
-  });
-
-  const navigate = useNavigate()
+    return months;
+  }, [form]);
 
   const signOut = () => {
     localStorage.clear();
-    setLoggedOut(true);
     navigate("/login");
-  }
+  };
 
   return (
     <>
@@ -1184,12 +1162,15 @@ export default function Dashboard() {
               <SidebarContent
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
-                unread={unread}
+                // Bug fix: `unread` was undefined — should be unreadForms.unread
+                unread={unreadForms.unread}
                 onLogout={() => {
                   setDrawerOpen(false);
                   setShowLogout(true);
                 }}
                 onClose={() => setDrawerOpen(false)}
+                // Bug fix: user prop was missing, causing crash inside SidebarContent
+                user={user}
               />
             </div>
           </>
@@ -1457,7 +1438,20 @@ export default function Dashboard() {
                         lineHeight: 1.55,
                       }}
                     >
-                      Point your HTML form's <code style={{ color: BRAND, background: BRAND_DIM, padding: "1px 5px", borderRadius: 4, fontSize: ".75rem" }}>action</code> attribute to this URL to receive submissions in your dashboard.
+                      Point your HTML form's{" "}
+                      <code
+                        style={{
+                          color: BRAND,
+                          background: BRAND_DIM,
+                          padding: "1px 5px",
+                          borderRadius: 4,
+                          fontSize: ".75rem",
+                        }}
+                      >
+                        action
+                      </code>{" "}
+                      attribute to this URL to receive submissions in your
+                      dashboard.
                     </div>
                     <div
                       style={{
@@ -1498,14 +1492,14 @@ export default function Dashboard() {
                           letterSpacing: ".01em",
                         }}
                       >
-                        {`https://formeze-backend.onrender.com/form/submit/${user._id}`}
+                        {`https://formeze-backend.onrender.com/f/${user._id}`}
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `https://formeze-backend.onrender.com/form/submit/${user._id}`
+                        `https://formeze-backend.onrender.com/f/${user._id}`,
                       );
                       toast.success("Endpoint URL copied!");
                     }}
@@ -1831,7 +1825,14 @@ export default function Dashboard() {
                       forms. Includes a preview of the submission.
                     </div>
                   </div>
-                  <Toggle checked={notifEmail} onChange={setNotifEmail} />
+                  {emailLoading ? (
+                    <ScaleLoader color="#29C763" />
+                  ) : (
+                    <Toggle
+                      checked={notifEmail}
+                      onChange={toggleEmailNotification}
+                    />
+                  )}
                 </div>
                 {notifEmail && (
                   <div
@@ -1849,7 +1850,6 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-
 
               <div
                 style={{
@@ -1952,7 +1952,7 @@ export default function Dashboard() {
                       placeItems: "center",
                     }}
                   >
-                    {unread}
+                    {unreadForms.unread > 9 ? "9+" : unreadForms.unread}
                   </span>
                 )}
               </button>

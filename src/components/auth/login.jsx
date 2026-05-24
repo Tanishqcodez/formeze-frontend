@@ -574,12 +574,12 @@ export default function Login({ initialTab }) {
                         Terms of Service
                       </a>{" "}
                       and{" "}
-                      <a
-                        href="#"
+                      <Link
+                        to="/privacy"
                         style={{ color: BRAND, textDecoration: "underline" }}
                       >
                         Privacy Policy
-                      </a>
+                      </Link>
                       .
                     </p>
                   )}

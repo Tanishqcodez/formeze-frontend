@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Toaster, toast } from "sonner";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate} from "react-router-dom";
 
 const BRAND = "#2ACA65";
 const BRAND_DIM = "rgba(42,202,101,0.10)";
@@ -12,6 +12,7 @@ function InputField({
   value,
   onChange,
   error,
+  rightSlot,
 }) {
   const [focused, setFocused] = useState(false);
   const active = focused || value;
@@ -55,7 +56,7 @@ function InputField({
               : "rgba(255,255,255,0.08)"
           }`,
           borderRadius: 12,
-          padding: "26px 16px 10px 16px",
+          padding: "26px 44px 10px 16px",
           fontSize: 14,
           color: "#d4dde3",
           fontFamily: "'DM Sans', sans-serif",
@@ -64,6 +65,20 @@ function InputField({
           transition: "border-color 0.2s, box-shadow 0.2s",
         }}
       />
+
+      {rightSlot && (
+        <div
+          style={{
+            position: "absolute",
+            right: 14,
+            top: "50%",
+            transform: "translateY(-50%)",
+            zIndex: 2,
+          }}
+        >
+          {rightSlot}
+        </div>
+      )}
 
       {error && (
         <span
@@ -81,16 +96,33 @@ function InputField({
   );
 }
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
   const canvasRef = useRef(null);
 
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+
   const [errors, setErrors] = useState({});
+
+  const params = useParams()
+  const navigate = useNavigate()
+  const id = params.id
+
+
+  useEffect(() => {
+    if(!id) navigate("/")
+  }, [])
+  
 
   useEffect(() => {
     const canvas = canvasRef.current;
+
     if (!canvas) return;
 
     const ctx = canvas.getContext("2d");
@@ -130,6 +162,7 @@ export default function ForgotPassword() {
       }
 
       t += 0.012;
+
       raf = requestAnimationFrame(draw);
     };
 
@@ -141,12 +174,16 @@ export default function ForgotPassword() {
   const validate = () => {
     const e = {};
 
-    if (!email.trim()) {
-      e.email = "Email is required";
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    ) {
-      e.email = "Enter a valid email";
+    if (!password) {
+      e.password = "Password is required";
+    } else if (password.length < 8) {
+      e.password = "Minimum 8 characters";
+    }
+
+    if (!confirm) {
+      e.confirm = "Please confirm your password";
+    } else if (confirm !== password) {
+      e.confirm = "Passwords do not match";
     }
 
     return e;
@@ -163,13 +200,15 @@ export default function ForgotPassword() {
       setLoading(true);
 
       const response = await fetch(
-        "https://formeze-backend.onrender.com/api/auth/forgot",
+        `https://formeze-backend.onrender.com/api/auth/reset/${id}`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ email }),
+          body: JSON.stringify({
+            password,
+          }),
         }
       );
 
@@ -177,6 +216,7 @@ export default function ForgotPassword() {
 
       if (data.success) {
         setDone(true);
+        navigate("/dashboard")
       } else {
         toast.error(
           "Some error occured, please try again later!"
@@ -190,6 +230,50 @@ export default function ForgotPassword() {
 
     setLoading(false);
   };
+
+  const EyeIcon = ({ show }) => (
+    <button
+      type="button"
+      onClick={() =>
+        show === "pass"
+          ? setShowPass((v) => !v)
+          : setShowConfirm((v) => !v)
+      }
+      style={{
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: 4,
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#8aaab8"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {(show === "pass"
+          ? showPass
+          : showConfirm) ? (
+          <>
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </>
+        ) : (
+          <>
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+            <line x1="1" y1="1" x2="23" y2="23" />
+          </>
+        )}
+      </svg>
+    </button>
+  );
 
   return (
     <>
@@ -298,7 +382,7 @@ export default function ForgotPassword() {
               overflow: "hidden",
             }}
           >
-            {/* Top shimmer */}
+            {/* Shimmer */}
             <div
               style={{
                 height: 4,
@@ -355,7 +439,7 @@ export default function ForgotPassword() {
                       marginBottom: 10,
                     }}
                   >
-                    Check your inbox
+                    Password updated
                   </h2>
 
                   <p
@@ -364,38 +448,31 @@ export default function ForgotPassword() {
                       color: "#8aaab8",
                       lineHeight: 1.7,
                       maxWidth: 300,
-                      margin: "0 auto 18px",
+                      margin: "0 auto 24px",
                     }}
                   >
-                    We sent a password reset link to:
+                    Your password has been changed
+                    successfully. You can now sign in with
+                    your new password.
                   </p>
 
-                  <div
+                  <Link
+                    to="/login"
                     style={{
-                      background: BRAND_DIM,
-                      border: `1px solid ${BRAND_BORDER}`,
-                      color: BRAND,
-                      borderRadius: 999,
-                      padding: "10px 16px",
                       display: "inline-flex",
-                      fontSize: 13,
+                      alignItems: "center",
+                      justifyContent: "center",
+                      padding: "12px 22px",
+                      borderRadius: 12,
+                      background: BRAND,
+                      color: "#04140a",
+                      textDecoration: "none",
                       fontWeight: 600,
-                      marginBottom: 20,
+                      fontSize: 14,
                     }}
                   >
-                    {email}
-                  </div>
-
-                  <p
-                    style={{
-                      fontSize: 13,
-                      color: "#8aaab8",
-                      lineHeight: 1.7,
-                    }}
-                  >
-                    Didn’t receive it? Check spam or try again
-                    later.
-                  </p>
+                    Back to sign in
+                  </Link>
                 </div>
               ) : (
                 <>
@@ -416,7 +493,7 @@ export default function ForgotPassword() {
                         letterSpacing: -0.4,
                       }}
                     >
-                      Reset your password
+                      Create new password
                     </h2>
 
                     <p
@@ -426,23 +503,40 @@ export default function ForgotPassword() {
                         lineHeight: 1.7,
                       }}
                     >
-                      Enter your email and we’ll send you a
-                      password reset link.
+                      Your new password must be different
+                      from previously used passwords.
                     </p>
                   </div>
 
-                  {/* Email */}
+                  {/* Password */}
                   <InputField
-                    label="Email address *"
-                    type="email"
-                    value={email}
+                    label="New password *"
+                    type={showPass ? "text" : "password"}
+                    value={password}
                     onChange={(e) =>
-                      setEmail(e.target.value)
+                      setPassword(e.target.value)
                     }
-                    error={errors.email}
+                    error={errors.password}
+                    rightSlot={<EyeIcon show="pass" />}
                   />
 
-                  {/* Back to login */}
+                  {/* Confirm */}
+                  <InputField
+                    label="Confirm password *"
+                    type={
+                      showConfirm ? "text" : "password"
+                    }
+                    value={confirm}
+                    onChange={(e) =>
+                      setConfirm(e.target.value)
+                    }
+                    error={errors.confirm}
+                    rightSlot={
+                      <EyeIcon show="confirm" />
+                    }
+                  />
+
+                  {/* Back */}
                   <div
                     style={{
                       textAlign: "right",
@@ -484,7 +578,8 @@ export default function ForgotPassword() {
                       padding: "15px 24px",
                       fontSize: 15,
                       fontWeight: 600,
-                      fontFamily: "'DM Sans',sans-serif",
+                      fontFamily:
+                        "'DM Sans',sans-serif",
                       cursor: loading
                         ? "not-allowed"
                         : "pointer",
@@ -516,11 +611,11 @@ export default function ForgotPassword() {
                           />
                         </svg>
 
-                        Sending reset link...
+                        Updating password...
                       </>
                     ) : (
                       <>
-                        Send reset link
+                        Update password
 
                         <svg
                           width="15"
@@ -554,15 +649,15 @@ export default function ForgotPassword() {
             }}
           >
             © 2026 Formeze ·{" "}
-            <a
-              href="#"
+            <Link
+              to="privacy"
               style={{
                 color: BRAND,
                 textDecoration: "none",
               }}
             >
               Privacy
-            </a>{" "}
+            </Link>{" "}
             ·{" "}
             <a
               href="#"

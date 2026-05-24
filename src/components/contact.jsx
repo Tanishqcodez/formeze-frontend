@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 
 const BRAND = "#2ACA65";
@@ -767,11 +768,11 @@ export default function Support() {
                       }}
                     >
                       By submitting this form you agree to our{" "}
-                      <span
+                      <Link to="/privacy"
                         style={{ color: BRAND, textDecoration: "underline" }}
                       >
                         Privacy Policy
-                      </span>
+                      </Link>
                       . We never share your data.
                     </p>
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../public/logo.png";
+import logo from "/logo.png";
 
 export default function Navbar() {
   const location = useLocation();
@@ -64,7 +64,7 @@ export default function Navbar() {
                   </Link>
                 ))}
                 {localStorage.getItem("token") &&
-                localStorage.getItem("verified") === "true" ? (
+                localStorage.getItem("token") ? (
                   <>
                     <Link
                       to="/dashboard"

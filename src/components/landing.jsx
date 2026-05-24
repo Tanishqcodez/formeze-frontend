@@ -101,7 +101,7 @@ export default function Landing() {
 const NAV_LINKS = ["Docs", "Help", "Support"];
 const [mobileOpen, setMobileOpen] = useState(false);
 
-  const codeSnippet = `<form action="https://formeze.io/f/YOUR_ID" method="POST">
+  const codeSnippet = `<form action="https://formeze-backend.onrender.com/f/YOUR_ID" method="POST">
   <input type="text" name="name" placeholder="Your name" />
   <input type="email" name="email" placeholder="Email" />
   <textarea name="message" placeholder="Message"></textarea>
@@ -287,7 +287,7 @@ const [mobileOpen, setMobileOpen] = useState(false);
                 <span className="text-green-400">form</span>
                 <span className="text-yellow-300/80"> action</span>
                 <span className="text-white/30">{"="}</span>
-                <span className="text-orange-300/80">"https://formeze.io/f/YOUR_ID"</span>
+                <span className="text-orange-300/80">"https://formeze-backend.onrender.com/f/YOUR_ID"</span>
                 <span className="text-yellow-300/80"> method</span>
                 <span className="text-white/30">{"="}</span>
                 <span className="text-orange-300/80">"POST"</span>
@@ -415,7 +415,7 @@ const [mobileOpen, setMobileOpen] = useState(false);
         </div>
       </section>
 
-      {/* TESTIMONIAL */}
+      {/* TESTIMONIAL
       <section className="py-20 border-y border-white/5 bg-white/1">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-12">
@@ -444,7 +444,7 @@ const [mobileOpen, setMobileOpen] = useState(false);
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* CTA */}
       <section className="py-28 text-center relative overflow-hidden">
@@ -480,7 +480,7 @@ const [mobileOpen, setMobileOpen] = useState(false);
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm text-white/35">
-            {["Docs", "Help", "Support", "Privacy", "Terms", "Status"].map(l => (
+            {["Docs", "Help", "Support", "Privacy", "Terms"].map(l => (
               <Link key={l} to={`/` + l.toLowerCase()} className="hover:text-green-400 transition-colors">{l}</Link>
             ))}
           </div>

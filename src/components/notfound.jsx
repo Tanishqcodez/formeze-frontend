@@ -316,7 +316,7 @@ export default function NotFound() {
         </div>
 
         <div className="fz404-breadcrumb">
-          formeze.io <span>/</span> <span>404</span>
+          formeze <span>/</span> <span>404</span>
         </div>
       </div>
     </div>

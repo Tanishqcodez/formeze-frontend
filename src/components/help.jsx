@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const BRAND = "#2ACA65";
 const BRAND_DARK = "#1ea854";
@@ -417,7 +418,7 @@ export default function Help() {
 
         {/* Footer */}
         <div style={{ textAlign: "center", marginTop: 48, color: "#2a3a42", fontSize: 12 }}>
-          © 2026 Formeze · <a href="#" style={{ color: "#3a5a48", textDecoration: "underline" }}>Privacy</a> · <a href="#" style={{ color: "#3a5a48", textDecoration: "underline" }}>Terms</a>
+          © 2026 Formeze · <Link to="/privacy" style={{ color: "#3a5a48", textDecoration: "underline" }}>Privacy</Link> · <a href="#" style={{ color: "#3a5a48", textDecoration: "underline" }}>Terms</a>
         </div>
 
       </div>
