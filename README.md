@@ -31,7 +31,7 @@ Formeze is a developer-friendly form backend that lets you add contact forms, le
 
 ### 1. Create an account
 
-Sign up at [formeze.com](https://formeze.netlify.app/) — the free plan requires no credit card.
+Sign up at [formeze](https://formeze.netlify.app/) — the free plan requires no credit card.
 
 ### 2. Create a form
 
