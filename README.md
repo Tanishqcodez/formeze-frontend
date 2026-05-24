@@ -42,7 +42,7 @@ In your dashboard click **New Form**, give it a name, and copy your unique form 
 **HTML form (simplest)**
 
 ```html
-<form action="https://api.formeze.com/f/YOUR_FORM_ID" method="POST">
+<form action="https://formeze-backend.onrender.com/f/YOUR_ID" method="POST">
   <input type="text"  name="name"    placeholder="Your name"    required />
   <input type="email" name="email"   placeholder="Your email"   required />
   <textarea           name="message" placeholder="Your message" required></textarea>
@@ -53,7 +53,7 @@ In your dashboard click **New Form**, give it a name, and copy your unique form 
 **Fetch / JavaScript**
 
 ```js
-const res = await fetch("https://api.formeze.com/f/YOUR_FORM_ID", {
+const res = await fetch("https://formeze-backend.onrender.com/f/YOUR_ID", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name, email, message }),
@@ -67,7 +67,7 @@ if (res.ok) console.log("Submission received!");
 ```jsx
 const handleSubmit = async (e) => {
   e.preventDefault();
-  await fetch("https://api.formeze.com/f/YOUR_FORM_ID", {
+  await fetch("https://formeze-backend.onrender.com/f/YOUR_ID", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -143,7 +143,7 @@ Formeze expects a `2xx` response within 10 seconds. Failed deliveries are retrie
 
 ## API Reference
 
-Base URL: `https://api.formeze.com`
+Base URL: `https://formeze-backend.onrender.com/`
 
 ### Submit a form
 
@@ -172,7 +172,7 @@ Authorization: Bearer YOUR_API_KEY
 
 Returns a paginated list of submissions for the given form.
 
-Full API docs are available at [docs.formeze.com](https://formeze.netlify.app/Docs).
+Full API docs are available at [formeze.netlify.app/docs](https://formeze.netlify.app/Docs).
 
 ---
 
@@ -184,8 +184,8 @@ Support hours: **Monday – Friday, 9am – 6pm UTC**. Pro and Business customer
 
 ## License
 
-Formeze's client-side libraries are open source under the [MIT License](LICENSE). The Formeze service itself is proprietary — see [formeze.com/terms](https://formeze.netlify.app/) for full terms of service.
+Formeze's client-side libraries are open source under the [MIT License](LICENSE). The Formeze service itself is proprietary — see [formeze.netlify.app/terms](https://formeze.netlify.app/) for full terms of service.
 
 ---
 
-<p align="center">Made with ♥ by the Formeze team · <a href="https://formeze.netlify.app/">formeze.com</a></p>
+<p align="center">Made with ♥ by the Formeze team · <a href="https://formeze.netlify.app/">formeze.netlify.app</a></p>
