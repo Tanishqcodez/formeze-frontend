@@ -14,6 +14,7 @@ import NotFound from "./components/notfound";
 import NotVerified from "./components/auth/notVerified";
 import PrivacyPage from "./components/privacy";
 import TermsPage from "./components/terms";
+import SubmissionPage from "./components/formsSuccess";
 function App() {
   return (
     <BrowserRouter>
@@ -32,6 +33,7 @@ function App() {
          <Route path="/notverified" element={<NotVerified />} />
          <Route path="/privacy" element={<PrivacyPage />} />
          <Route path="/terms" element={<TermsPage />} />
+         <Route path="/submissionpage" element={<SubmissionPage />} />
          <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>

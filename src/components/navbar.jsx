@@ -8,6 +8,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
     <>
+    {
+      location.pathname =="/submissionpage" ? <></> : <>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
@@ -145,6 +147,8 @@ export default function Navbar() {
           )}
         </header>
       )}
+    </>
+    }
     </>
   );
 }
