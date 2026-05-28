@@ -42,7 +42,7 @@ In your dashboard click **New Form**, give it a name, and copy your unique form 
 **HTML form (simplest)**
 
 ```html
-<form action="https://formeze-backend.onrender.com/f/YOUR_ID" method="POST">
+<form action="https://formeze.up.railway.app/f/YOUR_ID" method="POST">
   <input type="text"  name="name"    placeholder="Your name"    required />
   <input type="email" name="email"   placeholder="Your email"   required />
   <textarea           name="message" placeholder="Your message" required></textarea>
@@ -53,7 +53,7 @@ In your dashboard click **New Form**, give it a name, and copy your unique form 
 **Fetch / JavaScript**
 
 ```js
-const res = await fetch("https://formeze-backend.onrender.com/f/YOUR_ID", {
+const res = await fetch("https://formeze.up.railway.app/f/YOUR_ID", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ name, email, message }),
@@ -67,7 +67,7 @@ if (res.ok) console.log("Submission received!");
 ```jsx
 const handleSubmit = async (e) => {
   e.preventDefault();
-  await fetch("https://formeze-backend.onrender.com/f/YOUR_ID", {
+  await fetch("https://formeze.up.railway.app/f/YOUR_ID", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -143,7 +143,7 @@ Formeze expects a `2xx` response within 10 seconds. Failed deliveries are retrie
 
 ## API Reference
 
-Base URL: `https://formeze-backend.onrender.com/`
+Base URL: `https://formeze.up.railway.app/`
 
 ### Submit a form
 

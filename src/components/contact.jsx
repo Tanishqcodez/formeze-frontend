@@ -443,7 +443,7 @@ export default function Support() {
     if (Object.keys(e).length > 0) return;
     setLoading(true);
     try {
-      const response = await fetch("https://formeze-backend.onrender.com/contact", {
+      const response = await fetch("https://formeze.up.railway.app/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

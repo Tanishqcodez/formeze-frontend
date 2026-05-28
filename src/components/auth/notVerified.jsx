@@ -41,7 +41,7 @@ export default function EmailNotVerified() {
     setErrorMsg("");
 
     try {
-      const res = await fetch("https://formeze-backend.onrender.com/api/auth/createverificationtoken", {
+      const res = await fetch("https://formeze.up.railway.app/api/auth/createverificationtoken", {
         method: "GET",
         headers: { 
           "Content-Type": "application/json",

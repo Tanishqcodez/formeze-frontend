@@ -331,7 +331,7 @@ export default function Verification() {
     if (countdown > 0) return;
     setCountdown(60);
     const response = await fetch(
-      "https://formeze-backend.onrender.com/api/auth/createverificationtoken",
+      "https://formeze.up.railway.app/api/auth/createverificationtoken",
       {
         method: "GET",
         headers: {

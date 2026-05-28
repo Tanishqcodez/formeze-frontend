@@ -192,7 +192,7 @@ export default function Login({ initialTab }) {
       password: signup.password,
     };
     const response = await fetch(
-      `https://formeze-backend.onrender.com/api/auth/${tab == "login" ? "login" : "signup"}`,
+      `https://formeze.up.railway.app/api/auth/${tab == "login" ? "login" : "signup"}`,
       {
         method: "POST",
         headers: {

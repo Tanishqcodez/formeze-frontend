@@ -55,7 +55,7 @@ export default function Verify() {
   useEffect(() => {
   const verifyUser = async () => {
     const response = await fetch(
-      `https://formeze-backend.onrender.com/api/auth/verify/${params.id}`,
+      `https://formeze.up.railway.app/api/auth/verify/${params.id}`,
       {
         method: "GET",
         headers: {

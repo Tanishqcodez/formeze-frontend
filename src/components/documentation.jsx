@@ -459,7 +459,7 @@ function QuickStart() {
       <CodeBlock
         lang="html"
         filename="contact.html"
-        code={`<form action="https://formeze-backend.onrender.com/f/abcdefgh" method="POST">
+        code={`<form action="https://formeze.up.railway.app/f/abcdefgh" method="POST">
   <input type="text"  name="name"    placeholder="Your name"   required />
   <input type="email" name="email"   placeholder="Your email"  required />
   <textarea name="message" placeholder="Message..."></textarea>
@@ -634,7 +634,7 @@ function CustomRedirects() {
       <CodeBlock
         lang="js"
         filename="form.js"
-        code={`const res = await fetch("https://formeze-backend.onrender.com/f/abcdefgh", {
+        code={`const res = await fetch("https://formeze.up.railway.app/f/abcdefgh", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -819,7 +819,7 @@ export default function ContactForm() {
     const data = Object.fromEntries(new FormData(e.target));
 
     try {
-      const res = await fetch("https://formeze-backend.onrender.com/f/YOUR_FORM_ID", {
+      const res = await fetch("https://formeze.up.railway.app/f/YOUR_FORM_ID", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, _format: "json" }),

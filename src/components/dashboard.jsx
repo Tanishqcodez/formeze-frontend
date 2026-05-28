@@ -896,7 +896,7 @@ export default function Dashboard() {
   const fetchUser = async () => {
     try {
       const response = await fetch(
-        "https://formeze-backend.onrender.com/api/auth/fetch",
+        "https://formeze.up.railway.app/api/auth/fetch",
         {
           method: "GET",
           headers: {
@@ -932,7 +932,7 @@ export default function Dashboard() {
   const fetchForms = async () => {
     try {
       const response = await fetch(
-        "https://formeze-backend.onrender.com/form/fetch",
+        "https://formeze.up.railway.app/form/fetch",
         {
           method: "GET",
           headers: {
@@ -963,7 +963,7 @@ export default function Dashboard() {
     setEmailLoading(true);
     try {
       const response = await fetch(
-        "https://formeze-backend.onrender.com/toggle/email",
+        "https://formeze.up.railway.app/toggle/email",
         {
           method: "GET",
           headers: {
@@ -1492,14 +1492,14 @@ export default function Dashboard() {
                           letterSpacing: ".01em",
                         }}
                       >
-                        {`https://formeze-backend.onrender.com/f/${user._id}`}
+                        {`https://formeze.up.railway.app/f/${user._id}`}
                       </span>
                     </div>
                   </div>
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(
-                        `https://formeze-backend.onrender.com/f/${user._id}`,
+                        `https://formeze.up.railway.app/f/${user._id}`,
                       );
                       toast.success("Endpoint URL copied!");
                     }}

@@ -101,7 +101,7 @@ export default function Landing() {
 const NAV_LINKS = ["Docs", "Help", "Support"];
 const [mobileOpen, setMobileOpen] = useState(false);
 
-  const codeSnippet = `<form action="https://formeze-backend.onrender.com/f/YOUR_ID" method="POST">
+  const codeSnippet = `<form action="https://formeze.up.railway.app/f/YOUR_ID" method="POST">
   <input type="text" name="name" placeholder="Your name" />
   <input type="email" name="email" placeholder="Email" />
   <textarea name="message" placeholder="Message"></textarea>
@@ -287,7 +287,7 @@ const [mobileOpen, setMobileOpen] = useState(false);
                 <span className="text-green-400">form</span>
                 <span className="text-yellow-300/80"> action</span>
                 <span className="text-white/30">{"="}</span>
-                <span className="text-orange-300/80">"https://formeze-backend.onrender.com/f/YOUR_ID"</span>
+                <span className="text-orange-300/80">"https://formeze.up.railway.app/f/YOUR_ID"</span>
                 <span className="text-yellow-300/80"> method</span>
                 <span className="text-white/30">{"="}</span>
                 <span className="text-orange-300/80">"POST"</span>

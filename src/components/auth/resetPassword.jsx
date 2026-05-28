@@ -200,7 +200,7 @@ export default function ResetPassword() {
       setLoading(true);
 
       const response = await fetch(
-        `https://formeze-backend.onrender.com/api/auth/reset/${id}`,
+        `https://formeze.up.railway.app/api/auth/reset/${id}`,
         {
           method: "POST",
           headers: {

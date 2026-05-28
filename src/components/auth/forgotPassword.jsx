@@ -163,7 +163,7 @@ export default function ForgotPassword() {
       setLoading(true);
 
       const response = await fetch(
-        "https://formeze-backend.onrender.com/api/auth/forgot",
+        "https://formeze.up.railway.app/api/auth/forgot",
         {
           method: "POST",
           headers: {
